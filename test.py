@@ -14,11 +14,12 @@ import matplotlib.pyplot as plt
 import random
 
 
-MODEL_STATE = r'local_data/epoch=10-step=6908.ckpt'
+MODEL_STATE = r'local_data\epoch14_state.pt'
+WORD_DIR = r'D:\Repos\img2vec\local_data\word2vec'
+
+CATEGORIES = ['capybara', 'chair']
 
 INPUT_DIR = r"C:/Users/adam3/Downloads/vec_test"
-
-WORD_DIR = r'D:\Repos\img2vec\local_data\word2vec'
 
 DEVICE = 'cpu'
 
@@ -36,21 +37,18 @@ def main():
 
     word_lib = KeyedVectors.load(os.path.join(WORD_DIR, 'word2vec.kv'))
     
-    names = []
-    vec_mat = torch.zeros(2, 100)
+    n_cats = len(CATEGORIES)
+    vec_mat = torch.zeros(n_cats, 100)
     
-    i = 0
-    while i <= 1:
-        n = input(" >>> Class "+str(i)+": ").lower().strip()
+    for i in range(n_cats):
+        n = CATEGORIES[i]
         
         if n in word_lib:
-            names.append(n)
             vec_mat[i] = torch.tensor(word_lib[n])
-            i += 1
         else:
-            print("Error: invalid word.")
+            print("Error: unknown word at index "+str(i)+" ("+n+")\n")
+            exit()
     
-    print("")
     vec_mat = vec_mat.to(DEVICE)
     
     reshaper = torchvision.transforms.Resize((256, 256))
@@ -72,8 +70,8 @@ def main():
         tens = reshaper(cropper(tens))
         
         pred = torch.squeeze(model.infer(torch.unsqueeze(tens.to(DEVICE), 0), vec_mat))
-        for i in [0, 1]:
-            print(names[i]+':', round(pred[i].item(), 3))
+        for i in range(n_cats):
+            print(CATEGORIES[i]+':', round(pred[i].item(), 3))
         
         plt.imshow(tens.permute(1, 2, 0).numpy())
         plt.savefig("./figs/test_out.png")
