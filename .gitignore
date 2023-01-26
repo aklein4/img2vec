@@ -2,6 +2,8 @@
 # Large data types
 local_data/
 lightning_logs/
+**.tar
+**.tar.gz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
