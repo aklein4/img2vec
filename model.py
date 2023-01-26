@@ -103,7 +103,7 @@ class Img2Vec(pl.LightningModule):
 
         output = curr_matrix(vec)
 
-        return self.softy(10*output)
+        return self.softy(5*word_vecs.shape[0]*output)
 
 
     def _step(self, batch, prefix):

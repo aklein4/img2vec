@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import random
 
 
-MODEL_STATE = r'local_data\epoch14_state.pt'
+MODEL_STATE = r'local_data\epoch10_state.pt'
 WORD_DIR = r'D:\Repos\img2vec\local_data\word2vec'
 
 CATEGORIES = ['capybara', 'chair']
