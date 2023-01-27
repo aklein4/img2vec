@@ -106,6 +106,31 @@ class Img2Vec(pl.LightningModule):
         return self.softy(5*word_vecs.shape[0]*output)
 
 
+    # note: this works rather poorly
+    def infer_direct(self, x, words, lib):
+        
+        feats = self.model(x)
+        vec = self.buffer(feats)
+        vec = nn.functional.normalize(vec, dim=-1)
+
+        base_word = lib.similar_by_vector(torch.squeeze(vec).cpu().detach().numpy(), topn=1)[0][0]
+
+        output = []
+        for word in words:
+            sim = -lib.distance(word, base_word)
+            output.append(sim)
+        
+        return self.softy(5*len(output)*torch.tensor(output))
+
+    def predict(self, x, lib):
+
+        feats = self.model(x)
+        vec = self.buffer(feats)
+        vec = nn.functional.normalize(vec, dim=-1)
+
+        return lib.similar_by_vector(torch.squeeze(vec).cpu().detach().numpy(), topn=1)[0][0]
+
+
     def _step(self, batch, prefix):
 
         x, y = batch

@@ -14,12 +14,16 @@ import matplotlib.pyplot as plt
 import random
 
 
-MODEL_STATE = r'local_data\epoch10_state.pt'
+# import warnings
+# warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+
+MODEL_STATE = r'local_data\epoch14_state.pt'
 WORD_DIR = r'D:\Repos\img2vec\local_data\word2vec'
 
 CATEGORIES = ['capybara', 'chair']
 
-INPUT_DIR = r"C:/Users/adam3/Downloads/vec_test"
+INPUT_DIR = r"C:/Users/adam3/Downloads/capy"
 
 DEVICE = 'cpu'
 
@@ -36,6 +40,7 @@ def main():
     model.eval()
 
     word_lib = KeyedVectors.load(os.path.join(WORD_DIR, 'word2vec.kv'))
+    # word_lib.init_sims(replace=True)
     
     n_cats = len(CATEGORIES)
     vec_mat = torch.zeros(n_cats, 100)
@@ -72,6 +77,12 @@ def main():
         pred = torch.squeeze(model.infer(torch.unsqueeze(tens.to(DEVICE), 0), vec_mat))
         for i in range(n_cats):
             print(CATEGORIES[i]+':', round(pred[i].item(), 3))
+        
+        print("\nOverall prediction:", model.predict(torch.unsqueeze(tens.to(DEVICE), 0), word_lib))
+        
+        # direct_pred = model.infer_direct(torch.unsqueeze(tens.to(DEVICE), 0), CATEGORIES, word_lib)
+        # for i in range(n_cats):
+        #     print(CATEGORIES[i]+':', round(direct_pred[i].item(), 3))
         
         plt.imshow(tens.permute(1, 2, 0).numpy())
         plt.savefig("./figs/test_out.png")
