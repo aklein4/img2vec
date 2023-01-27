@@ -4,6 +4,7 @@ local_data/
 lightning_logs/
 **.tar
 **.tar.gz
+figs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
